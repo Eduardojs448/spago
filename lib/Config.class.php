@@ -11,8 +11,8 @@
  */
  
  $COMMERCE_CONFIG = array(
- 	"APIKEY" => "4736F972-D377-4647-9547-7320B4AL10C0", // Registre aquí su apiKey
- 	"SECRETKEY" => "18640589b90e2a482cb50f2ea5acdcbd26d1bfe3", // Registre aquí su secretKey
+ 	"APIKEY" => "72D408EF-5D1A-430E-9C73-8BA96D05LCD", // Registre aquí su apiKey
+ 	"SECRETKEY" => "3611ecf957ec944249e22d6971f29ff36260e40", // Registre aquí su secretKey
  	//"APIURL" => "https://www.flow.cl/api", // Producción EndPoint
  	"APIURL" => "https://sandbox.flow.cl/api", // Sandbox EndPoint
  	"BASEURL" => "https://solvencia.cl/pagadeudas" //Registre aquí la URL base en su página donde instalará el cliente
