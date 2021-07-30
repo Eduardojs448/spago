@@ -11,11 +11,11 @@
  */
  
  $COMMERCE_CONFIG = array(
- 	"APIKEY" => "24F67D70-124D-4A2F-838C-5521DLE030F5", // Registre aquí su apiKey
- 	"SECRETKEY" => "d389dd40a907a5a3a8a20b2f8172f1b3fde9d7db", // Registre aquí su secretKey
+ 	"APIKEY" => "7FF4FA3F-B4D4-4270-AAA7-1LB632353941",// Registre aquí su apiKey
+ 	"SECRETKEY" => "d51d63b612d5fd04cf00fbb62d1a3c21f3ed6a34", // Registre aquí su secretKey
  	//"APIURL" => "https://www.flow.cl/api", // Producción EndPoint
  	"APIURL" => "https://sandbox.flow.cl/api", // Sandbox EndPoint
- 	"BASEURL" => "https://solvencia.cl/pagadeudas" //Registre aquí la URL base en su página donde instalará el cliente
+ 	"BASEURL" => "https://localhost/spago"
  );
  
  class Config {
