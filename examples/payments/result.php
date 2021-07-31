@@ -7,6 +7,12 @@
  */
 require(__DIR__ . "/../../lib/FlowApi.class.php");
 
+require_once '../../conexion.php';
+
+$con = conectar();
+$stmt = $con->prepare("UPDATE ordenes_de_pago_detalle SET estado=:estado WHERE id_transaccion=:id_transaccion");
+
+
 try {
 	//Recibe el token enviado por Flow
 	if(!isset($_POST["token"])) {
@@ -20,6 +26,18 @@ try {
 	$serviceName = "payment/getStatus";
 	$flowApi = new FlowApi();
 	$response = $flowApi->send($serviceName, $params, "GET");
+
+    $con->beginTransaction();
+    try{
+        $stmt->execute(array(
+            'estado' => 'COMPLETADO',
+            'id_transaccion' => $token,
+        ));
+        $con->commit();
+    } catch (PDOException $e){
+        $con->rollBack();
+        echo "Error!: " . $e->getMessage() . "</br>";
+    }
 	
 	print_r($response);
 	

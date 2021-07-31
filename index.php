@@ -1,7 +1,7 @@
 <br>
 <img width="20%" style="display:block;" src="https://imgur.com/AqkpPQe.jpg">
 <br>
-<center><h1> Buscador de deudas:</h1> </center>
+<center><h1 style="margin-top: -70px;"> Buscador de deudas:</h1> </center>
 <br>
      <center> <label for="validationTooltipUsername" class="form-label"> Por favor ingrese los datos solicitados para buscar sus deudas.</label></center>
    
@@ -30,111 +30,113 @@
 require('conexion.php');
 $rows = [];
 if(isset($_POST['rut'])){
-    $id = $_POST['rut'];
+    $rut = $_POST['rut'];
     $con = conectar();
-    $SQL = 'SELECT * FROM tabladetallepagos WHERE rutDeudor = :rut';
+    $SQL ="SELECT * FROM ordenes_de_pago_detalle WHERE estado = 'DEUDA' AND rut_deudor = :rut";
     $stmt = $con->prepare($SQL);
-    $result = $stmt->execute(array(':rut'=>$id));
+    $result = $stmt->execute(array('rut'=>$rut));
     $rows= $stmt->fetchAll(\PDO::FETCH_OBJ);
 }
 ?>
 
 <div class="container">
-  
-  <form role="form" method="POST">
-    <div class="form-group">
-     <strong> <label for="email">RUT:</label></strong>
-      <input type="text" class="form-control" name ="rut" placeholder="Ingrese el RUT" required>
-      <strong> <label for="email">CORREO:</label></strong>
-      <input type="text" class="form-control" name ="email" placeholder="Ingrese el correo" required>
-    </div>
-  <!-- </div>
-    <div class="form-group">
-      <label for="email">CORREO:</label>
-      <input type="text" class="form-control" name ="email" placeholder="Ingrese el correo" required>
-    </div>
-    <div class="form-group form-check">
-      <label class="form-check-label">
-  <input class="form-check-input" type="checkbox" name="remember"> Remember me
-      </label>
-    </div>-->
-    <button type="submit" class="btn btn-danger">BUSCAR DEUDA</button> 
-  </form>
-</div>
-    <div class="container">
-        <div class="panel-heading">
-            <div class="panel-body">
-            <form action="confirmacion.php" method="POST">            
-            <table class="table table-bordered">
-                <thead>
+
+    <div class="panel-heading">
+        <div class="panel-body">
+            <form role="form" method="POST">
+
+                <div class="row">
+                    <div class="col-lg-5 col-xs-12">
+                        <div class="form-group">
+                            <label for=""><b>RUT</b></label>
+                            <input type="text" class="form-control" placeholder="Ingrese Rut.." name="rut" value="<?php if(isset($rut)){ echo $rut; } ?>">
+                        </div>
+                    </div>
+                    <div class="col-lg-5 col-xs-12">
+                        <label for=""><b>CORREO:</b></label>
+                        <input type="text" class="form-control" placeholder="Ingrese Correo.." name="email">
+                    </div>
+                    <div class="col-lg-2 col-xs-12" style="margin-top: 31px;">
+                        <button type="submit" class="btn btn-danger btn-block" style="">BUSCAR DEUDA</button>
+                    </div>
+                </div>
+
+            </form>
+
+
+            <form action="confirmacion.php" method="POST">
+                <table class="table table-bordered">
+                    <thead>
                     <tr>
                         <th>#</th>
                         <th>Empresa</th>
                         <th>Rut Deudor</th>
-                        <th>Operacion</th>
+                        <th>Email</th>
                         <th>Cuota</th>
                         <th>Fecha Vencimiento</th>
                         <th>Monto</th>
                         <th>Seleccionar</th>
-                        
+
                     </tr>
-                </thead>
-                <tbody>
-                <?php if(count($rows)){ ?>
-                                    
-                                    <?php 
-                                      $email=$_POST['email'];
-                                      foreach( $rows as $row){ ?> 
-                                <input type="hidden" name="email" value="<?php echo $email;?>">
-                                <input type="hidden" name="rut" value="<?php echo $row->rutDeudor;?>">
-                                <input type="hidden" name="empresa" value="<?php echo $row->empresa;?>">
-                                <input type="hidden" name="ordePagoId[]" value="<?php echo $row->idOrdenPago;?>">
-                                <input type="hidden" name="cuota[]" value="<?php echo $row->cuota;?>">
-                                <input type="hidden" name="monto[]" value="<?php echo $row->monto;?>">
-                                <input type="hidden" name="operacion" value="<?php echo $row->operacion;?>">
+                    </thead>
+                    <tbody>
+                    <?php if(count($rows)){
+                        $email = $_POST['email'];
+                        ?>
+
+                        <?php  foreach( $rows as $row){ ?>
+                            <input type="hidden" name="email" value="<?php echo $email;?>">
+                            <input type="hidden" name="rut" value="<?php echo $row->rut_deudor;?>">
+                            <input type="hidden" name="empresa" value="<?php echo $row->empresa;?>">
+                            <input type="hidden" name="ordenPagoId" value="<?php echo $row->fk_orden_pago;?>">
+                            <input type="hidden" name="ordenPagoDetalleId[]" value="<?php echo $row->id;?>">
+                            <input type="hidden" name="monto[]" value="<?php echo $row->cuota_monto;?>">
 
                             <tr>
-                                <td><?php echo $row->idOrdenPago;?></td>
+                                <td><?php echo $row->num_orden;?></td>
                                 <td><?php echo $row->empresa;?></td>
-                                <td><?php echo $row->rutDeudor;?></td>
-                                <td><?php echo $row->operacion;?></td>
+                                <td><?php echo $row->rut_deudor;?></td>
+                                <td><?php echo $email;?></td>
                                 <td><?php echo $row->cuota;?></td>
-                                <td><?php echo $row->fechaVencimiento;?></td>
-							                  <td><?php echo $row->monto;?></td>
-                                <input type="hidden" name="check[]" id="<?php echo $row->idOrdenPago;?>" value="0">
-								                <td>
-                                  <input type="checkbox" 
-                                      class="checkcuota" 
-                                      ordenId="<?php echo $row->idOrdenPago;?>" 
-                                      monto="<?php echo $row->monto;?>"
-                                ></td>
+                                <td><?php echo $row->fecha_vencimiento;?></td>
+                                <td><?php echo $row->cuota_monto;?></td>
+                                <input type="hidden" name="check[]" id="<?php echo $row->id;?>" value="0">
+                                <td>
+                                    <input type="checkbox"
+                                           class="checkcuota"
+                                           ordenId="<?php echo $row->id;?>"
+                                           monto="<?php echo $row->cuota_monto;?>"
+                                    >
+                                </td>
 
-                
                             </tr>
 
-                          <?php } ?>
+                        <?php } ?>
+                        <tr>
+                            <td colspan="6" class="text-rigth"></td>
+                            <td  class="text-rigth"><b>Total $ CLP</b></td>
+                            <td><b></b><span id="totalPagar">0.00</span></td>
+                        </tr>
 
                     <?php } else { ?>
-                        <tr>
-                            <td colspan="8"> Sin Informacion! ...</td>
+                        <tr class="text-center">
+                            <td colspan="8"> <b>Sin Informacion! ...</b></td>
                         </tr>
-                   <?php } ?>
-                </tbody>
-            </table>
+                    <?php } ?>
+                    </tbody>
+                </table>
 
-          
-            <button class="btn btn-info " type="submit">PAGAR DEUDA</button>
-            </div>
-           
-            <center><strong><label for="email"> TOTAL DEUDA A PAGAR:</label></strong> </center>
-            <center><input type="text" id="sub" value="0" disabled></center>
-         
-            
+
+                <button class="btn btn-info float-right" type="submit">PAGAR DEUDA</button>
         </div>
-        
-    </div>
 
+        <!--<center><strong><label for="email"> TOTAL DEUDA A PAGAR:</label></strong> </center>-->
+        <center><input type="hidden" id="sub" value="0" disabled></center>
+
+
+    </div>
 </div>
+
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -149,22 +151,29 @@ if(isset($_POST['rut'])){
   ///scrip para sumar y mostrar la deuda en el input y en el panel de confirmacion
   $(document).ready( function(){
     $('.checkcuota').on('click', function(){
-        var x, sub=parseInt($('#sub').val()),
-            monto=parseInt($(this).attr('monto')),
+        var x, sub=parseFloat($('#sub').val()),
+            monto=parseFloat($(this).attr('monto')),
             ordenId = $(this).attr('ordenId')
             
         if($(this).is(':checked')){
             $(`#${ordenId}`).val(1);
 
-            x = parseInt(sub) + parseInt(monto)
+            x = parseFloat(sub) + parseFloat(monto)
 
         }else{
             $(`#${ordenId}`).val(0);
-
-            x = parseInt(sub) - parseInt(monto)
+            x = parseFloat(sub) - parseFloat(monto)
         }
 
-        x < 1 ? $('#sub').val(0) : $('#sub').val(x);
+        console.log(x)
+
+        if(x < 1 ){
+            $('#sub').val(0.00)
+            $('#totalPagar').html(0.00)
+        }else{
+            $('#sub').val(x.toFixed(2))
+            $('#totalPagar').html(x.toFixed(2));
+        }
 
     })
   });

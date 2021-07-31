@@ -1,26 +1,28 @@
 <?php
-/**
- * Ejemplo de creación de una orden de cobro, iniciando una transacción de pago
- * Utiliza el método payment/create
- */
+require_once "./lib/FlowApi.class.php";
+require_once "./conexion.php";
+
+
+$con = conectar();
+
+$stmt = $con->prepare("UPDATE ordenes_de_pago_detalle SET estado=:estado, id_transaccion=:id_transaccion WHERE id=:id");
 
 $rut = $_POST['rut'];
 $empresa = $_POST['empresa'];
-$operacion= $_POST['operacion'];
 $totMonto = $_POST['monto'];
 $email=$_POST['email'];
-require_once "./lib/FlowApi.class.php";
+$detallesId = $_POST['detallesId'];
+$ordenPagoId = $_POST['ordenPagoId'];
 
-//Para datos opcionales campo "optional" prepara un arreglo JSON
 $optional = array(
 	"rut" => $rut,
-	"otroDato" => $operacion
+	"otroDato" => 'test'
 );
 $optional = json_encode($optional);
 
 //Prepara el arreglo de datos
 $params = array(
-	"commerceOrder" => rand(1100,2000),
+	"commerceOrder" => $ordenPagoId,
 	"subject" => "Pago de prueba",
 	"currency" => "CLP",
 	"amount" => $totMonto,
@@ -40,9 +42,27 @@ try {
 	$response = $flowApi->send($serviceName, $params,"POST");
 	//Prepara url para redireccionar el browser del pagador
 	$redirect = $response["url"] . "?token=" . $response["token"];
-	header("location:$redirect");
-} catch (Exception $e) {
-	echo $e->getCode() . " - " . $e->getMessage();
-}
 
-?>
+
+    foreach ($detallesId as $detalleId) {
+        $con->beginTransaction();
+        try{
+            $stmt->execute(array(
+                'estado' => 'PENDIENTE',
+                'id_transaccion' => $response["token"],
+                'id' => $detalleId,
+            ));
+            $con->commit();
+        } catch (PDOException $e){
+            $con->rollBack();
+            echo "Error!: " . $e->getMessage() . "</br>";
+        }
+	}
+
+	header("location:$redirect");
+
+} catch (Exception $e) {
+
+	echo $e->getCode() . " - " . $e->getMessage();
+
+}
