@@ -9,17 +9,20 @@ $cuota = '';
 $monto = '';
 $operacion='';
 $email=$_POST['email'];
+
+
 if(isset($_POST['rut'])){
     $rut = $_POST['rut'];
     $empresa = $_POST['empresa'];
-    $ordePagoId = $_POST['ordePagoId'];
-    $cuota = $_POST['cuota'];
+    $ordePagoId = $_POST['ordenPagoId'];
+    $ordenPagoDetalleId = $_POST['ordenPagoDetalleId'];
     $monto = $_POST['monto'];
-    $operacion =$_POST['operacion'];
 
     foreach ($_POST['check'] as $key => $value) {
         if($_POST['check'][$key] == 1){
             $totMonto += $monto[$key];
+
+            $detallesId[] = $ordenPagoDetalleId[$key];
         }
     }
 }
@@ -114,14 +117,20 @@ if(isset($_POST['rut'])){
     </table>
 
 
-<form action="pagoFlowApi.php" method="post"  >
-<input type= "hidden"  value ="<?php echo $empresa;?>"name="empresa">
-<input type= "hidden"  value ="<?php echo $rut;?>"name="rut">
-<input type= "hidden"  value ="<?php echo $totMonto;?>"name="monto">
-<input type= "hidden"  value ="<?php echo $operacion;?>"name="operacion">
-<input type= "hidden"  value ="<?php echo $email;?>"name="email">
+    <form action="pagoFlowApi.php" method="post"  >
+        <input type="hidden"  value ="<?php echo $empresa;?>" name="empresa">
+        <input type="hidden"  value ="<?php echo $rut;?>" name="rut">
+        <input type="hidden"  value ="<?php echo $totMonto;?>" name="monto">
+        <input type="hidden"  value="<?php echo $ordePagoId;?>" name="ordenPagoId" >
+        <?php
+            /*IDS DE LOS DETALLES DE LA ORDEN DE PAGO*/
+            foreach ($detallesId as $id) {
+                echo '<input type= "hidden"  value ="'.$id.'" name="detallesId[]">';
+            }
+        ?>
+        <input type= "hidden"  value ="<?php echo $email;?>"name="email">
 
-<button type="submit" class="btn btn-danger">PAGAR DEUDA</button>
+        <button type="submit" class="btn btn-danger">PAGAR DEUDA</button>
     </form>
 
 </div>

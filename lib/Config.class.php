@@ -15,7 +15,7 @@
  	"SECRETKEY" => "d51d63b612d5fd04cf00fbb62d1a3c21f3ed6a34", // Registre aquí su secretKey
  	//"APIURL" => "https://www.flow.cl/api", // Producción EndPoint
  	"APIURL" => "https://sandbox.flow.cl/api", // Sandbox EndPoint
- 	"BASEURL" => "https://localhost/spago"
+ 	"BASEURL" => "https://spago.dev"
  );
  
  class Config {
